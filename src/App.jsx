@@ -1,5 +1,5 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
-import { ShoppingCart, Plus, Minus, Trash2, ChevronRight, Check, X, Search } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2, ChevronRight, Check, X, Search, Menu } from 'lucide-react';
 
 // Cart Context
 const CartContext = createContext();
@@ -42,7 +42,7 @@ const fallbackMenuData = [
   { id: 20, name: 'Tiramisu', category: 'Desserts', price: 7.49, image: 'assets/images/food/pepperoni.png', description: 'Italian coffee-flavored dessert', popular: true },
 ];
 
-const categories = ['All', 'Pizza', 'Burgers', 'Pasta', 'Salads', 'Drinks', 'Desserts'];
+const categories = ['All', 'Nutritionals', 'Protein,Shakes & Bars', 'Healthy Living', 'Skin Care', 'Business Tools', 'Usana Gears'];
 
 // Main App Component
 export default function RestaurantApp() {
@@ -309,8 +309,29 @@ export default function RestaurantApp() {
         .to-green-500 {
           --tw-gradient-to: #008C3C !important;
         }
+        @keyframes slideInLeft {
+          from { transform: translateX(-100%); }
+          to { transform: translateX(0); }
+        }
+        .animate-slideInLeft {
+          animation: slideInLeft 0.3s ease-out forwards;
+        }
+        @keyframes slideInRight {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+        .animate-slideInRight {
+          animation: slideInRight 0.3s ease-out forwards;
+        }
+        @keyframes slideOutRight {
+          from { transform: translateX(0); }
+          to { transform: translateX(100%); }
+        }
+        .animate-slideOutRight {
+          animation: slideOutRight 0.25s ease-in forwards;
+        }
       `}</style>
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-gray-900 pb-16 md:pb-0 pt-[140px] md:pt-[100px]">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-gray-900 pb-16 md:pb-0 pt-20 md:pt-20">
         <Header
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
@@ -338,7 +359,7 @@ export default function RestaurantApp() {
         {currentPage === 'checkout' && <CheckoutPage setCurrentPage={setCurrentPage} clearCart={clearCart} />}
         {currentPage === 'confirmation' && <ConfirmationPage setCurrentPage={setCurrentPage} orderNumber={pendingOrderNumber} paymentStatus={paymentStatus} />}
         {currentPage === 'payment-failed' && <PaymentFailedPage setCurrentPage={setCurrentPage} orderNumber={pendingOrderNumber} />}
-        {showCart && <CartDrawer setShowCart={setShowCart} setCurrentPage={setCurrentPage} />}
+        <CartDrawer isOpen={showCart} setShowCart={setShowCart} setCurrentPage={setCurrentPage} />
         {showSizeModal && selectedProduct && (
           <SizeModal
             product={selectedProduct}
@@ -371,12 +392,15 @@ export default function RestaurantApp() {
               className={`flex flex-col items-center px-4 py-1 ${currentPage === 'menu' ? 'text-green-600' : 'text-gray-500'}`}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5h6v6H4z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5h6v6h-6z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 13h6v6H4z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 13h6v6h-6z" />
               </svg>
-              <span className="text-xs font-medium">Menu</span>
+              <span className="text-xs font-medium">Category</span>
             </button>
             <button
-              onClick={() => setShowCart(true)}
+              onClick={() => setShowCart(prev => !prev)}
               className={`flex flex-col items-center px-4 py-1 relative ${showCart ? 'text-green-600' : 'text-gray-500'}`}
             >
               <ShoppingCart className="w-6 h-6" />
@@ -441,20 +465,67 @@ function Header({ currentPage, setCurrentPage, setShowCart, searchQuery, setSear
   const { getTotalItems } = useCart();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
-      <div className="bg-green-600">
-        <div className="w-full px-8 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setCurrentPage('home')}>
-              <div className="text-4xl font-black text-white drop-shadow-lg">K</div>
-              <div>
-                <h1 className="text-xl font-black text-white drop-shadow-lg tracking-wider">Kuchefnero.ph</h1>
-                <p className="text-[9px] text-white font-bold">Food Ordering System (ver 1.0)</p>
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-black">
+      <div className="bg-black text-white text-center text-xs md:text-sm font-bold py-2 px-4 tracking-wide">
+        Sign up as a Preferred Customer and Save 10%
+      </div>
+      <div className="bg-gray-900">
+        <div className="w-full px-8 py-1 md:py-1">
+          <div className="flex items-center justify-between gap-4">
+            <div className="hidden md:flex flex-1 max-w-2xl items-center gap-3">
+              <button
+                type="button"
+                className="p-2 text-white hover:text-gray-300"
+                aria-label="Open menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+              <div className="relative w-full mt-[-10px]">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="Search for products..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    if (e.target.value && currentPage !== 'menu') setCurrentPage('menu');
+                  }}
+                  className="w-full h-[30px] pl-10 pr-4 rounded-full border border-gray-700 focus:border-gray-500 focus:outline-none font-normal text-white bg-gray-800 placeholder-gray-400"
+                />
               </div>
             </div>
 
-            <div className="hidden md:flex flex-1 max-w-md mx-6 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-700 w-5 h-5" />
+            <div className="hidden md:flex items-center text-white font-black text-lg ml-2 whitespace-nowrap">
+              USANA
+            </div>
+
+            <nav className="hidden md:flex items-center space-x-4">
+              <button
+                onClick={() => setCurrentPage('home')}
+                className={`font-black transition-all px-4 py-2 rounded-lg text-sm tracking-wider ${currentPage === 'home' ? 'bg-gray-800 text-white' : 'text-gray-200 hover:bg-gray-800'}`}
+              >
+                HOME
+              </button>
+              <button
+                onClick={() => setCurrentPage('menu')}
+                className={`font-black transition-all px-4 py-2 rounded-lg text-sm tracking-wider ${currentPage === 'menu' ? 'bg-gray-800 text-white' : 'text-gray-200 hover:bg-gray-800'}`}
+              >
+                MENU
+              </button>
+            </nav>
+
+          </div>
+
+          <div className="mt-3 md:hidden flex items-center gap-2">
+            <button
+              type="button"
+              className="flex-[1] p-2 text-white flex items-center justify-center"
+              aria-label="Open menu"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <div className="relative flex-[6] min-w-0 mt-[-10px]">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search for food..."
@@ -463,59 +534,15 @@ function Header({ currentPage, setCurrentPage, setShowCart, searchQuery, setSear
                   setSearchQuery(e.target.value);
                   if (e.target.value && currentPage !== 'menu') setCurrentPage('menu');
                 }}
-                className="w-full pl-10 pr-4 py-2 rounded-full border-2 border-green-500 focus:border-green-700 focus:outline-none font-bold text-green-800 bg-green-100 placeholder-green-700/50"
+                className="w-full h-[30px] pl-10 pr-4 rounded-full border border-gray-700 focus:border-gray-500 focus:outline-none font-normal text-white bg-gray-800 placeholder-gray-400"
               />
             </div>
-
-            <nav className="hidden md:flex items-center space-x-4">
-              <button
-                onClick={() => setCurrentPage('home')}
-                className={`font-black transition-all px-4 py-2 rounded-lg text-sm tracking-wider ${currentPage === 'home' ? 'bg-green-400 text-green-700' : 'text-green-400 hover:bg-green-700'}`}
-              >
-                HOME
-              </button>
-              <button
-                onClick={() => setCurrentPage('menu')}
-                className={`font-black transition-all px-4 py-2 rounded-lg text-sm tracking-wider ${currentPage === 'menu' ? 'bg-green-400 text-green-700' : 'text-green-400 hover:bg-green-700'}`}
-              >
-                MENU
-              </button>
-            </nav>
-
-            <button
-              onClick={() => setShowCart(true)}
-              className="relative bg-green-400 text-white px-6 py-2 rounded-full hover:shadow-2xl transition-all flex items-center space-x-2 shadow-lg hover:scale-105 font-black text-sm"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              <span>CART</span>
-              {getTotalItems() > 0 && (
-                <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-black animate-bounce">
-                  {getTotalItems()}
-                </span>
-              )}
-            </button>
-          </div>
-
-          <div className="mt-3 md:hidden relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-700 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search for food..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                if (e.target.value && currentPage !== 'menu') setCurrentPage('menu');
-              }}
-              className="w-full pl-10 pr-4 py-2 rounded-full border-2 border-green-500 focus:border-green-700 focus:outline-none font-bold text-green-800 bg-green-100 placeholder-green-700/50"
-            />
+            <div className="flex-[3] text-right text-white text-sm font-black tracking-wide">
+              USANA
+            </div>
           </div>
         </div>
       </div>
-      {/* Brush stroke edge */}
-      <svg className="w-full h-5 -mt-px" viewBox="0 0 1440 20" preserveAspectRatio="none">
-        <path fill="#007A33" d="M0,0 L0,10 C40,14 60,8 100,12 C160,18 200,6 280,14 C340,20 400,8 480,11 C560,14 600,6 680,10 C760,15 820,5 900,12 C960,17 1020,7 1100,10 C1180,13 1240,6 1320,11 C1380,15 1420,8 1440,10 L1440,0 Z" />
-        <path fill="#007A33" opacity="0.7" d="M0,0 L0,6 C60,10 100,4 160,8 C240,14 300,4 380,9 C460,14 520,5 600,8 C680,12 740,4 820,7 C900,11 960,3 1040,8 C1120,12 1180,5 1260,7 C1340,10 1400,4 1440,6 L1440,0 Z" />
-      </svg>
     </header>
   );
 }
@@ -523,139 +550,33 @@ function Header({ currentPage, setCurrentPage, setShowCart, searchQuery, setSear
 // Home Page
 function HomePage({ setCurrentPage, menuData, isLoading }) {
   const popularItems = menuData.filter(item => item.popular).slice(0, 6);
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const heroSlides = [
-    {
-      title: "TASTE THE SUCCESS",
-      subtitle: "DELIVERED FAST!",
-      description: "Order your favorite meals and get them delivered hot and fresh",
-      bgImage: "assets/images/hero/hero1.jpg"
-    },
-    {
-      title: "FRESH & DELICIOUS",
-      subtitle: "EVERY TIME!",
-      description: "Made with quality ingredients, cooked with passion",
-      bgImage: "assets/images/hero/hero1.jpg"
-    },
-    {
-      title: "30 MINUTES OR LESS",
-      subtitle: "GUARANTEED!",
-      description: "Fast delivery right to your doorstep",
-      bgImage: "assets/images/hero/hero1.jpg"
-    },
-    {
-      title: "ORDER NOW",
-      subtitle: "PAY LATER!",
-      description: "Multiple payment options available for your convenience",
-      bgImage: "assets/images/hero/hero1.jpg"
-    }
-  ];
-
-  // Auto-rotate carousel every 4 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-  };
-
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
+  const heroSlide = {
+    title: "TASTE THE SUCCESS",
+    subtitle: "DELIVERED FAST!",
+    description: "Order your favorite meals and get them delivered hot and fresh",
+    bgImage: "assets/images/hero/hero1.jpg"
   };
 
   return (
     <div>
-      {/* Hero Carousel Section */}
-      <section className="relative overflow-hidden">
-        <div className="relative h-[307px] md:h-[400px]">
-          {heroSlides.map((slide, index) => (
-            <div
-              key={index}
-              className={`absolute inset-0 text-white transition-all duration-700 ease-in-out transform ${
-                index === currentSlide
-                  ? 'translate-x-0 opacity-100'
-                  : index < currentSlide
-                  ? '-translate-x-full opacity-0'
-                  : 'translate-x-full opacity-0'
-              }`}
-              style={{
-                backgroundImage: `url(${slide.bgImage})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              }}
-            >
-              <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-              <div className="relative w-full px-8 h-full flex flex-col justify-center items-center text-center" >
-                <h1 className="text-3xl md:text-5xl font-black mb-4 drop-shadow-lg animate-fadeIn">
-                  {slide.title}
-                  <br />
-                  <span className="text-yellow-300">{slide.subtitle}</span>
-                </h1>
-                <p className="text-sm md:text-lg mb-8 text-white font-bold animate-fadeIn">
-                  {slide.description}
-                </p>
-                <button
-                  onClick={() => setCurrentPage('menu')}
-                  className="bg-yellow-400 text-gray-900 px-8 py-4 rounded-lg text-sm font-black hover:bg-yellow-300 transition-all shadow-xl hover:shadow-2xl inline-flex items-center space-x-2 tracking-wider animate-fadeIn hover:scale-105"
-                >
-                  <span>ORDER NOW</span>
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Navigation Arrows */}
-        <button
-          onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 backdrop-blur-sm text-white p-3 rounded-full transition-all z-10 hover:scale-110"
-          aria-label="Previous slide"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <button
-          onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 backdrop-blur-sm text-white p-3 rounded-full transition-all z-10 hover:scale-110"
-          aria-label="Next slide"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-
-        {/* Dots Navigation */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-3 z-10">
-          {heroSlides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`transition-all duration-300 rounded-full ${
-                index === currentSlide
-                  ? 'bg-white w-8 h-3'
-                  : 'bg-white/50 hover:bg-white/75 w-3 h-3'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
+      {/* Hero Section */}
+      <section className="overflow-hidden">
+        <img
+          src={heroSlide.bgImage}
+          alt="Hero"
+          className="w-full h-[260px] md:h-[360px] object-cover block"
+        />
       </section>
 
       {/* Popular Items */}
       <section className="bg-gray-50 py-12 sm:py-16">
-        <div className="w-full px-8">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-green-600 mb-8 sm:mb-12 text-center drop-shadow-lg">⭐ POPULAR NOW</h2>
+        <div className="w-full px-0 md:px-2">
+        <h2
+          className="text-xl sm:text-2xl lg:text-3xl font-medium text-black tracking-tight mb-8 sm:mb-12 text-center"
+          style={{ fontFamily: "Calibri, 'Segoe UI', 'Segoe UI Rounded', system-ui, -apple-system, sans-serif", marginTop: "-30px" }}
+        >
+          Featured Products
+        </h2>
         {isLoading ? (
           <div className="text-center py-16">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mb-4"></div>
@@ -663,17 +584,22 @@ function HomePage({ setCurrentPage, menuData, isLoading }) {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide bg-gray-100 p-3 pl-8 sm:pl-10 -mt-5">
               {popularItems.map(item => (
-                <PopularItemCard key={item.id} item={item} />
+                <div
+                  key={item.id}
+                  className="min-w-[216px] sm:min-w-[234px] snap-start scroll-ml-4 sm:scroll-ml-6"
+                >
+                  <PopularItemCard item={item} />
+                </div>
               ))}
             </div>
             <div className="text-center mt-8 sm:mt-12">
               <button
                 onClick={() => setCurrentPage('menu')}
-                className="bg-red-600 text-white px-8 py-3 rounded-lg font-black hover:bg-red-700 transition-all shadow-lg text-sm tracking-wider"
+                className="bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-gray-800 transition-all shadow-lg text-sm tracking-wider"
               >
-                VIEW FULL MENU
+                SHOP BY CATEGORY
               </button>
             </div>
           </>
@@ -686,20 +612,26 @@ function HomePage({ setCurrentPage, menuData, isLoading }) {
         <div className="w-full px-8">
           {/* Features */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-16">
-            <div className="bg-green-600 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all">
-              <div className="text-6xl mb-4">🚀</div>
-              <h3 className="text-xl font-black text-white mb-2">FAST DELIVERY</h3>
-              <p className="text-green-100 font-bold">Get your food delivered in 30 minutes or less</p>
+            <div className="bg-blue-600 rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden">
+              <img src="assets/images/features/feature1.jpg" alt="Fast delivery" className="w-full h-[75%] object-cover block" />
+              <div className="p-5">
+                <h3 className="text-xl font-black text-white mb-2">FAST DELIVERY</h3>
+                <p className="text-blue-100 font-bold">Get your food delivered in 30 minutes or less</p>
+              </div>
             </div>
-            <div className="bg-green-600 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all">
-              <div className="text-6xl mb-4">👨‍🍳</div>
-              <h3 className="text-xl font-black text-white mb-2">FRESH FOOD</h3>
-              <p className="text-green-100 font-bold">Made fresh daily with quality ingredients</p>
+            <div className="bg-blue-600 rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden">
+              <img src="assets/images/features/feature2.jpg" alt="Fresh food" className="w-full h-[75%] object-cover block" />
+              <div className="p-5">
+                <h3 className="text-xl font-black text-white mb-2">FRESH FOOD</h3>
+                <p className="text-blue-100 font-bold">Made fresh daily with quality ingredients</p>
+              </div>
             </div>
-            <div className="bg-green-600 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all">
-              <div className="text-6xl mb-4">⭐</div>
-              <h3 className="text-xl font-black text-white mb-2">BEST QUALITY</h3>
-              <p className="text-green-100 font-bold">Rated 4.9/5 by our satisfied customers</p>
+            <div className="bg-blue-600 rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden">
+              <img src="assets/images/features/feature3.jpg" alt="Best quality" className="w-full h-[75%] object-cover block" />
+              <div className="p-5">
+                <h3 className="text-xl font-black text-white mb-2">BEST QUALITY</h3>
+                <p className="text-blue-100 font-bold">Rated 4.9/5 by our satisfied customers</p>
+              </div>
             </div>
           </div>
 
@@ -707,7 +639,7 @@ function HomePage({ setCurrentPage, menuData, isLoading }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-left border-t-2 border-green-300 pt-6">
             {/* About */}
             <div>
-              <h4 className="text-xl font-black text-green-600 mb-4">ABOUT US</h4>
+              <h4 className="text-xl font-black text-black mb-4">ABOUT US</h4>
               <p className="text-gray-700 text-sm leading-relaxed">
                 Kuchefnero delivers delicious food right to your doorstep. Quality ingredients, fast service, and satisfied customers since 2020.
               </p>
@@ -715,7 +647,7 @@ function HomePage({ setCurrentPage, menuData, isLoading }) {
 
             {/* Contact */}
             <div>
-              <h4 className="text-xl font-black text-green-600 mb-4">CONTACT</h4>
+              <h4 className="text-xl font-black text-black mb-4">CONTACT</h4>
               <div className="space-y-3 text-gray-700 text-sm">
                 <div className="flex items-start space-x-2">
                   <span>📍</span>
@@ -734,7 +666,7 @@ function HomePage({ setCurrentPage, menuData, isLoading }) {
 
             {/* Hours */}
             <div>
-              <h4 className="text-xl font-black text-green-600 mb-4">HOURS</h4>
+              <h4 className="text-xl font-black text-black mb-4">HOURS</h4>
               <div className="space-y-2 text-gray-700 text-sm">
                 <div className="flex justify-between">
                   <span>Monday - Friday:</span>
@@ -753,16 +685,16 @@ function HomePage({ setCurrentPage, menuData, isLoading }) {
 
             {/* Social Links */}
             <div>
-              <h4 className="text-xl font-black text-green-600 mb-4">FOLLOW US</h4>
+              <h4 className="text-xl font-black text-black mb-4">FOLLOW US</h4>
               <div className="flex space-x-4 mb-4">
-                <a href="#" className="w-10 h-10 bg-green-600 hover:bg-green-500 rounded-full flex items-center justify-center text-white text-xl transition-all">
-                  📘
+                <a href="#" className="w-10 h-10 bg-black hover:bg-gray-800 rounded-full flex items-center justify-center text-white text-sm font-bold tracking-wide transition-all">
+                  IG
                 </a>
-                <a href="#" className="w-10 h-10 bg-green-600 hover:bg-green-500 rounded-full flex items-center justify-center text-white text-xl transition-all">
-                  📷
+                <a href="#" className="w-10 h-10 bg-black hover:bg-gray-800 rounded-full flex items-center justify-center text-white text-sm font-bold tracking-wide transition-all">
+                  FB
                 </a>
-                <a href="#" className="w-10 h-10 bg-green-600 hover:bg-green-500 rounded-full flex items-center justify-center text-white text-xl transition-all">
-                  🐦
+                <a href="#" className="w-10 h-10 bg-black hover:bg-gray-800 rounded-full flex items-center justify-center text-white text-sm font-bold tracking-wide transition-all">
+                  X
                 </a>
               </div>
               <div className="text-gray-700 text-sm">
@@ -800,34 +732,34 @@ function PopularItemCard({ item }) {
   const { addToCart } = useCart();
 
   return (
-    <div className="bg-gray-50 rounded-xl shadow-lg hover:shadow-2xl transition-all overflow-hidden group w-full h-96 flex flex-col">
-      <div className="bg-gray-50 p-4 text-center flex-1 flex flex-col justify-center">
+    <div className="bg-gray-50 border border-gray-200 shadow-lg hover:shadow-2xl transition-all overflow-hidden group w-full min-h-[16rem] flex flex-col">
+      <div className="bg-gray-50 p-3 text-center flex-1 flex flex-col justify-center">
         {item.image && item.image.startsWith('assets/') ? (
-          <img src={item.image} alt={item.name} className="object-contain mx-auto rounded-lg h-48 w-48 group-hover:scale-110 transition-transform bg-gray-50" />
+          <img src={item.image} alt={item.name} className="object-contain mx-auto rounded-lg h-36 w-36 group-hover:scale-110 transition-transform bg-gray-50" />
         ) : (
           <div className="text-9xl group-hover:scale-110 transition-transform">{item.image}</div>
         )}
       </div>
-      <div className="p-6 flex flex-col justify-between h-40">
+      <div className="p-5 flex flex-col gap-3">
         <div className="flex items-start justify-between mb-2">
-          <h3 className="text-base sm:text-lg md:text-xl font-bold text-green-600">{item.name}</h3>
-          <span className="bg-green-600 text-white px-3 py-1 rounded-full text-xs font-black whitespace-nowrap">POPULAR</span>
+          <h3 className="text-base sm:text-lg md:text-xl font-semibold text-black">{item.name}</h3>
+          <span className="bg-black text-white px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap">POPULAR</span>
         </div>
-        <p className="text-gray-600 text-sm sm:text-base mb-3 line-clamp-2 font-normal">{item.description}</p>
-        <div className="flex items-center justify-between gap-2">
+        <p className="text-gray-800 text-sm sm:text-base mb-3 -mt-2.5 line-clamp-2 font-normal">{item.description}</p>
+        <div className="flex flex-col items-center gap-3 w-full px-2">
           {item.sizes ? (
-            <span className="text-sm sm:text-base md:text-lg font-semibold text-green-600 whitespace-nowrap flex-shrink-0">
+            <span className="text-sm sm:text-base md:text-lg font-semibold text-black whitespace-nowrap text-center">
               From Php {Math.min(...item.sizes.map(s => s.price)).toFixed(2)}
             </span>
           ) : (
-            <span className="text-sm sm:text-base md:text-lg font-semibold text-green-600 whitespace-nowrap flex-shrink-0">Php {item.price.toFixed(2)}</span>
+            <span className="text-sm sm:text-base md:text-lg font-semibold text-black whitespace-nowrap text-center">Php {item.price.toFixed(2)}</span>
           )}
           <button
             onClick={() => addToCart(item)}
-            className="bg-green-600 text-white px-4 sm:px-5 py-3 rounded-lg hover:bg-green-700 transition-all flex items-center space-x-1 font-bold text-sm hover:scale-105 whitespace-nowrap flex-shrink-0"
+            className="w-full max-w-[220px] bg-black text-white px-5 py-3 rounded-full hover:bg-gray-800 transition-all flex items-center justify-center gap-2 font-medium text-sm"
           >
-            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span>ADD</span>
+            <Plus className="w-4 h-4" />
+            <span>Add to Cart</span>
           </button>
         </div>
       </div>
@@ -846,17 +778,17 @@ function MenuPage({ selectedCategory, setSelectedCategory, searchQuery, menuData
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Category Filter - Right below header */}
-      <div className="bg-white shadow-md sticky top-[140px] md:top-[100px] z-40">
+      <div className="bg-white shadow-md sticky top-[90px] md:top-[90px] z-40">
         <div className="w-full px-8">
           <div className="flex overflow-x-auto space-x-1 py-3 scrollbar-hide">
             {categories.map(category => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-3 py-2 rounded-md font-medium whitespace-nowrap transition-all text-xs tracking-wide ${
+                className={`px-4 py-2 rounded-full font-semibold whitespace-nowrap transition-all text-xs tracking-wide ${
                   selectedCategory === category
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-black text-white shadow'
+                    : 'bg-gray-100 text-black hover:bg-gray-200'
                 }`}
               >
                 {category.toUpperCase()}
@@ -919,20 +851,20 @@ function MenuItem({ item }) {
       {/* Right side - Product Details */}
       <div className="p-4 sm:p-5 md:p-6 flex flex-col justify-start flex-1 min-w-0">
         <div className="mb-4">
-          <h3 className="text-base sm:text-lg md:text-xl font-bold text-green-600 mb-2 break-words">{item.name}</h3>
+          <h3 className="text-base sm:text-lg md:text-xl font-bold text-black mb-2 break-words">{item.name}</h3>
           <p className="text-gray-600 text-sm sm:text-base mb-3 line-clamp-2 font-normal">{item.description}</p>
         </div>
         <div className="flex flex-col gap-2 mt-auto">
           {item.sizes ? (
-            <span className="text-sm sm:text-base md:text-lg font-semibold text-green-600 break-words">
+            <span className="text-sm sm:text-base md:text-lg font-semibold text-black break-words">
               From Php {Math.min(...item.sizes.map(s => s.price)).toFixed(2)}
             </span>
           ) : (
-            <span className="text-sm sm:text-base md:text-lg font-semibold text-green-600 break-words">Php {item.price.toFixed(2)}</span>
+            <span className="text-sm sm:text-base md:text-lg font-semibold text-black break-words">Php {item.price.toFixed(2)}</span>
           )}
           <button
             onClick={() => addToCart(item)}
-            className="bg-green-600 text-white px-4 sm:px-5 py-3 rounded-lg hover:bg-green-700 transition-all flex items-center justify-center space-x-1 text-sm font-bold hover:scale-105 w-full whitespace-nowrap"
+            className="bg-black text-white px-5 sm:px-6 py-3 rounded-full hover:bg-gray-800 transition-all flex items-center justify-center space-x-2 text-sm font-semibold hover:scale-105 w-full whitespace-nowrap"
           >
             <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
             <span>ADD</span>
@@ -944,20 +876,59 @@ function MenuItem({ item }) {
 }
 
 // Cart Drawer
-function CartDrawer({ setShowCart, setCurrentPage }) {
+function CartDrawer({ isOpen, setShowCart, setCurrentPage }) {
   const { cartItems } = useCart();
+  const [rendered, setRendered] = useState(isOpen);
+  const [closing, setClosing] = useState(false);
+  const hasPushedState = React.useRef(false);
+
+  // Handle open/close render lifecycle
+  useEffect(() => {
+    if (isOpen) {
+      setRendered(true);
+      setClosing(false);
+      if (!hasPushedState.current) {
+        window.history.pushState({ cartDrawer: true }, '');
+        hasPushedState.current = true;
+      }
+    } else if (rendered) {
+      setClosing(true);
+      const timer = setTimeout(() => setRendered(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, rendered]);
+
+  // Back button closes drawer with animation
+  useEffect(() => {
+    const handlePop = () => setShowCart(false);
+    window.addEventListener('popstate', handlePop);
+    return () => window.removeEventListener('popstate', handlePop);
+  }, [setShowCart]);
+
+  if (!rendered) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end" onClick={() => setShowCart(false)}>
-      <div className="bg-gray-100 w-full max-w-md h-full overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed left-0 right-0 bottom-[100px] top-[90px] md:top-0 md:bottom-0 bg-transparent z-50 flex justify-end"
+      onClick={() => setShowCart(false)}
+    >
+      <div
+        className={`bg-gray-100 w-[70vw] max-w-[960px] min-w-[260px] h-full md:h-[calc(100%-20px)] md:mb-5 overflow-y-auto shadow-2xl rounded-l-2xl ${
+          closing ? 'animate-slideOutRight' : 'animate-slideInRight'
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Your Cart</h2>
-            <button onClick={() => setShowCart(false)} className="text-gray-500 hover:text-gray-700">
+            <button
+              onClick={() => setShowCart(false)}
+              className="text-gray-500 hover:text-gray-700"
+            >
               <X className="w-6 h-6" />
             </button>
           </div>
-          
+
           {cartItems.length === 0 ? (
             <div className="text-center py-16">
               <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -967,10 +938,13 @@ function CartDrawer({ setShowCart, setCurrentPage }) {
             <>
               <div className="space-y-4 mb-6">
                 {cartItems.map((item, index) => (
-                  <CartItemCard key={`${item.id}-${item.selectedSize || 'default'}-${index}`} item={item} />
+                  <CartItemCard
+                    key={`${item.id}-${item.selectedSize || 'default'}-${index}`}
+                    item={item}
+                  />
                 ))}
               </div>
-              <button 
+              <button
                 onClick={() => {
                   setShowCart(false);
                   setCurrentPage('cart');
@@ -1013,9 +987,9 @@ function CartPage({ setCurrentPage }) {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
-      <div className="w-full px-8">
-        <h1 className="text-2xl font-medium text-gray-800 mb-8 text-center">Your Cart</h1>
+    <div className="bg-gray-50 min-h-screen pt-0 pb-8">
+      <div className="w-full px-4 md:px-6">
+        <h1 className="text-2xl font-medium text-gray-800 mb-4 text-center mt-2.5">Your Cart</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-3">
@@ -1025,7 +999,7 @@ function CartPage({ setCurrentPage }) {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm p-5 sticky top-[160px] md:top-[120px]">
+            <div className="bg-white rounded-lg shadow-sm p-5 sticky top-[110px]">
               <h3 className="text-base font-medium text-gray-800 mb-4">Order Summary</h3>
               <div className="space-y-2 mb-4">
                 <div className="flex justify-between text-sm text-gray-600">
