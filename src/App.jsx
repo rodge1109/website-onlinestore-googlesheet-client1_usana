@@ -331,7 +331,7 @@ export default function RestaurantApp() {
           animation: slideOutRight 0.25s ease-in forwards;
         }
       `}</style>
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-gray-900 pb-16 md:pb-0 pt-20 md:pt-20">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900 to-gray-900 pb-16 md:pb-0 pt-20 md:pt-20 font-sans">
         <Header
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
@@ -514,6 +514,19 @@ function Header({ currentPage, setCurrentPage, setShowCart, searchQuery, setSear
               </button>
             </nav>
 
+            <button
+              onClick={() => setShowCart(prev => !prev)}
+              className="hidden md:inline-flex relative bg-black text-white px-5 py-2 rounded-full hover:bg-gray-800 transition-all font-semibold text-sm"
+            >
+              <ShoppingCart className="w-5 h-5 mr-2" />
+              Cart
+              {getTotalItems() > 0 && (
+                <span className="absolute -top-2 -right-2 bg-green-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                  {getTotalItems()}
+                </span>
+              )}
+            </button>
+
           </div>
 
           <div className="mt-3 md:hidden flex items-center gap-2">
@@ -573,7 +586,7 @@ function HomePage({ setCurrentPage, menuData, isLoading }) {
         <div className="w-full px-0 md:px-2">
         <h2
           className="text-xl sm:text-2xl lg:text-3xl font-medium text-black tracking-tight mb-8 sm:mb-12 text-center"
-          style={{ fontFamily: "Calibri, 'Segoe UI', 'Segoe UI Rounded', system-ui, -apple-system, sans-serif", marginTop: "-30px" }}
+          style={{ marginTop: "-30px" }}
         >
           Featured Products
         </h2>
@@ -614,23 +627,23 @@ function HomePage({ setCurrentPage, menuData, isLoading }) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-16">
             <div className="bg-blue-600 rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden">
               <img src="assets/images/features/feature1.jpg" alt="Fast delivery" className="w-full h-[75%] object-cover block" />
-              <div className="p-5">
-                <h3 className="text-xl font-black text-white mb-2">FAST DELIVERY</h3>
-                <p className="text-blue-100 font-bold">Get your food delivered in 30 minutes or less</p>
+              <div className="p-5 space-y-1">
+                <h3 className="text-xl font-semibold text-white leading-[5px]">FAST DELIVERY</h3>
+                <p className="text-blue-100 font-medium leading-snug">Get your food delivered in 30 minutes or less</p>
               </div>
             </div>
             <div className="bg-blue-600 rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden">
               <img src="assets/images/features/feature2.jpg" alt="Fresh food" className="w-full h-[75%] object-cover block" />
-              <div className="p-5">
-                <h3 className="text-xl font-black text-white mb-2">FRESH FOOD</h3>
-                <p className="text-blue-100 font-bold">Made fresh daily with quality ingredients</p>
+              <div className="p-5 space-y-1">
+                <h3 className="text-xl font-semibold text-white leading-[5px]">FRESH FOOD</h3>
+                <p className="text-blue-100 font-medium leading-snug">Made fresh daily with quality ingredients</p>
               </div>
             </div>
             <div className="bg-blue-600 rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden">
               <img src="assets/images/features/feature3.jpg" alt="Best quality" className="w-full h-[75%] object-cover block" />
-              <div className="p-5">
-                <h3 className="text-xl font-black text-white mb-2">BEST QUALITY</h3>
-                <p className="text-blue-100 font-bold">Rated 4.9/5 by our satisfied customers</p>
+              <div className="p-5 space-y-1">
+                <h3 className="text-xl font-semibold text-white leading-[5px]">BEST QUALITY</h3>
+                <p className="text-blue-100 font-medium leading-snug">Rated 4.9/5 by our satisfied customers</p>
               </div>
             </div>
           </div>
@@ -741,9 +754,9 @@ function PopularItemCard({ item }) {
         )}
       </div>
       <div className="p-5 flex flex-col gap-3">
-        <div className="flex items-start justify-between mb-2">
+        <div className="mb-1 space-y-0.5">
+          <span className="inline-flex bg-black text-white px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap">POPULAR</span>
           <h3 className="text-base sm:text-lg md:text-xl font-semibold text-black">{item.name}</h3>
-          <span className="bg-black text-white px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap">POPULAR</span>
         </div>
         <p className="text-gray-800 text-sm sm:text-base mb-3 -mt-2.5 line-clamp-2 font-normal">{item.description}</p>
         <div className="flex flex-col items-center gap-3 w-full px-2">
