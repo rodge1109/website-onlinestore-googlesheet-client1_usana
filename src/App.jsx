@@ -47,7 +47,7 @@ const categories = ['All', 'Nutritionals', 'Protein,Shakes & Bars', 'Healthy Liv
 // Main App Component
 export default function RestaurantApp() {
   const [cartItems, setCartItems] = useState([]);
-  const [currentPage, setCurrentPage] = useState('home');
+  const [currentPage, setCurrentPage] = useState('menu');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCart, setShowCart] = useState(false);
@@ -541,7 +541,7 @@ function Header({ currentPage, setCurrentPage, setShowCart, searchQuery, setSear
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Search for food..."
+                placeholder="Search for product..."
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -813,7 +813,7 @@ function MenuPage({ selectedCategory, setSelectedCategory, searchQuery, menuData
 
       {/* Menu Content */}
       <div className="w-full px-8 py-6 sm:py-8">
-        <h1 className="text-2xl sm:text-3xl font-semibold text-green-600 mb-6 sm:mb-8 text-center">OUR MENU</h1>
+        <h1 className="text-2xl sm:text-3xl font-semibold text-green-600 mb-6 sm:mb-8 text-center">SELECT PRODUCT</h1>
 
         {isLoading ? (
           <div className="text-center py-16">
@@ -957,15 +957,17 @@ function CartDrawer({ isOpen, setShowCart, setCurrentPage }) {
                   />
                 ))}
               </div>
-              <button
-                onClick={() => {
-                  setShowCart(false);
-                  setCurrentPage('cart');
-                }}
-                className="w-full bg-green-600 text-white py-4 rounded-full font-bold hover:bg-green-700 transition-all"
-              >
-                View Full Cart
-              </button>
+              <div className="w-full flex justify-center">
+                <button
+                  onClick={() => {
+                    setShowCart(false);
+                    setCurrentPage('cart');
+                  }}
+                  className="w-full max-w-[200px] bg-green-600 text-white py-3 rounded-full font-semibold text-sm hover:bg-green-700 transition-all"
+                >
+                  View Full Cart
+                </button>
+              </div>
             </>
           )}
         </div>
@@ -1266,7 +1268,7 @@ function CheckoutPage({ setCurrentPage, clearCart }) {
           <div className="lg:col-span-2">
           <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm p-6 space-y-6">
             <div>
-              <h3 className="text-base font-medium text-gray-700 mb-4">Delivery Address</h3>
+              <h3 className="text-base font-medium text-gray-700 mb-4">Contact Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <input
                   type="text"
