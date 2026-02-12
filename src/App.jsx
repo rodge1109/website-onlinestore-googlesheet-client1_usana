@@ -47,7 +47,7 @@ const categories = ['All', 'Nutritionals', 'Protein,Shakes & Bars', 'Healthy Liv
 // Main App Component
 export default function RestaurantApp() {
   const [cartItems, setCartItems] = useState([]);
-  const [currentPage, setCurrentPage] = useState('menu');
+  const [currentPage, setCurrentPage] = useState('home');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCart, setShowCart] = useState(false);
@@ -467,7 +467,7 @@ function Header({ currentPage, setCurrentPage, setShowCart, searchQuery, setSear
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-black">
       <div className="bg-black text-white text-center text-xs md:text-sm font-bold py-2 px-4 tracking-wide">
-        Sign up as a Preferred Customer and Save 10%
+       USANA Independent Distrubutor - Tony De La Cruz
       </div>
       <div className="bg-gray-900">
         <div className="w-full px-8 py-1 md:py-1">
@@ -537,7 +537,7 @@ function Header({ currentPage, setCurrentPage, setShowCart, searchQuery, setSear
             >
               <Menu className="w-6 h-6" />
             </button>
-            <div className="relative flex-[6] min-w-0 mt-[-10px]">
+            <div className="relative flex-[8] min-w-0 mt-[-10px]">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 w-4 h-4" />
               <input
                 type="text"
@@ -979,8 +979,8 @@ function CartDrawer({ isOpen, setShowCart, setCurrentPage }) {
 // Cart Page
 function CartPage({ setCurrentPage }) {
   const { cartItems, getTotalPrice } = useCart();
-  const deliveryFee = 4.99;
-  const tax = getTotalPrice() * 0.08;
+  const deliveryFee = 0;
+  const tax = 0;
   const total = getTotalPrice() + deliveryFee + tax;
 
   if (cartItems.length === 0) {
@@ -1026,7 +1026,7 @@ function CartPage({ setCurrentPage }) {
                   <span>Php {deliveryFee.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-600">
-                  <span>Tax (8%)</span>
+                  <span>Tax (Inclusive)</span>
                   <span>Php {tax.toFixed(2)}</span>
                 </div>
                 <div className="border-t border-gray-200 pt-2 mt-2">
@@ -1175,8 +1175,8 @@ function CheckoutPage({ setCurrentPage, clearCart }) {
     setIsSubmitting(true);
 
     try {
-      const deliveryFee = 4.99;
-      const tax = getTotalPrice() * 0.08;
+      const deliveryFee = 0;
+      const tax = 0;
       const total = getTotalPrice() + deliveryFee + tax;
 
       // Format cart items as a string
@@ -1255,8 +1255,8 @@ function CheckoutPage({ setCurrentPage, clearCart }) {
     }
   };
 
-  const deliveryFee = 4.99;
-  const tax = getTotalPrice() * 0.08;
+  const deliveryFee = 0;
+  const tax = 0;
   const total = getTotalPrice() + deliveryFee + tax;
 
   return (
