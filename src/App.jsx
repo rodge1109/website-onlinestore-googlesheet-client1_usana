@@ -47,7 +47,7 @@ const categories = ['All', 'Nutritionals', 'Protein,Shakes & Bars', 'Healthy Liv
 // Main App Component
 export default function RestaurantApp() {
   const [cartItems, setCartItems] = useState([]);
-  const [currentPage, setCurrentPage] = useState('home');
+  const [currentPage, setCurrentPage] = useState('menu');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCart, setShowCart] = useState(false);
@@ -654,7 +654,9 @@ function HomePage({ setCurrentPage, menuData, isLoading }) {
             <div>
               <h4 className="text-xl font-black text-black mb-4">ABOUT US</h4>
               <p className="text-gray-700 text-sm leading-relaxed">
-                Kuchefnero delivers delicious food right to your doorstep. Quality ingredients, fast service, and satisfied customers since 2020.
+                Helios is a web development studio focused on building fast, scalable, and visually striking digital experiences.
+
+We design and develop websites that don’t just look good—they work flawlessly. From clean, high-performance frontends to robust, scalable backends, we combine thoughtful design with solid engineering to create products that help brands grow online.
               </p>
             </div>
 
@@ -664,15 +666,15 @@ function HomePage({ setCurrentPage, menuData, isLoading }) {
               <div className="space-y-3 text-gray-700 text-sm">
                 <div className="flex items-start space-x-2">
                   <span>📍</span>
-                  <span>Cantecson,Gairan,Bogo,Cebu,Philippines</span>
+                  <span>San Vicente,Bogo,Cebu,Philippines</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span>📞</span>
-                  <span>+63 912 345 6789</span>
+                  <span>+63 927 623 0491</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span>📧</span>
-                  <span>hello@kuchefnero.com</span>
+                  <span>rodge.tonacao@gmail.com</span>
                 </div>
               </div>
             </div>
@@ -729,7 +731,7 @@ function HomePage({ setCurrentPage, menuData, isLoading }) {
           {/* Footer Bottom */}
           <div className="border-t-2 border-green-300 mt-12 pt-8 text-center">
             <p className="text-gray-600 text-sm">
-              © 2026 Kuchefnero. All rights reserved. |
+              © 2026 Developed by Rodge Tonacao. All rights reserved. |
               <a href="#" className="hover:text-green-600 transition-all ml-1">Privacy Policy</a> |
               <a href="#" className="hover:text-green-600 transition-all ml-1">Terms of Service</a>
             </p>
